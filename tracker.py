@@ -2,33 +2,16 @@
 #author: abhinandan.vellanki@gmail.com
 
 #import the necessary packages
-#from imutils.video import VideoStream
-#from imutils.video import FPS
 import argparse
-#import imutils
 import time
 import cv2
+import numpy as np
 
 class track():
     
-    def __init__(self, video, tracker): 
-        # #construct argument parser and parse arguments
-        # ap = argparse.ArgumentParser()
-        # ap.add_argument("-v", "--video", type=str, help="path to video") # '--video ' and specify path; default: opens webcam
-        # ap.add_argument("-t", "--tracker", type=str, default="kcf", help="OpenCV tracker type")# '--tracker ' and specify tracker to use; default: kcf 
-        # args=vars(ap.parse_args())
-        
+    def __init__(self, video, tracker):        
         self.video = video
         self.tracker_name = tracker
-        
-        #extract OpenCV version info
-        (major, minor) = cv2.__version__.split(".")[:2]
-
-        #if version <=3.2, use special factory function to create object tracker
-        # if int(major) == 3 and int(minor) <3:
-        #    self.tracker=cv2.Tracker_create(self.tracker_name.upper())
-           
-        # else:#if version >=3.3, need to explicitly call tracker constructor
         OPENCV_TRACKERS={ #mapper, does not include GOTURN
             "csrt": cv2.TrackerCSRT_create,
             "kcf": cv2.TrackerKCF_create,
@@ -41,85 +24,74 @@ class track():
         self.tracker=OPENCV_TRACKERS[self.tracker_name]() #call constructor at runtime
 
         #initialize bounding box coordinates to track
-        BBtrack = None
-
-        #if no video path, choose webcam
-	    # if self.video == None:
-	    #     print("Starting video capture...")
-	    #     try:
-        #         self.vs=VideoStream(src=0).start()
-        #         time.sleep(1.0)#time to start stream
-        #     except:
-        #         print("Unable to capture video from webcam!!")
-        #         self.vs=None
-        # else:
-        self.vs=cv2.VideoCapture(self.video)
-
+        self.BBtrack = None
         #initialize fps throughput estimator
         #self.fps=None
     
     def start(self):
+        #start video stream
+        self.vs=cv2.VideoCapture(self.video)
+                
         #iterate over video frames
-        while True:
-            frame=self.vs.read()
-            frame=frame[1] if not self.video == None else frame #handle separate cases for VideoStream or VideoCapture
-            
-            if frame is None:#reached end of stream
-                break;
-            
-            #resize for faster processing and get dimensions
-            #frame=imutils.resize(frame, width=500)
-            frame = cv2.resize(frame,)
-            (H,W) = frame.shape[:2]
-            
-            #if an object is being tracked
-            if BBtrack is not None:
-                (success, box) = self.tracker.update(frame)#get new BB coordinates of selected box
+        while self.vs.isOpened():
+            ret,frame=self.vs.read()
+            if ret :
+                print(np.shape(frame))
+                frame=frame[1] if not self.video == None else frame #handle separate cases for VideoStream or VideoCapture
                 
-                if success:
-                    (x,y,w,h) = [int(v) for v in box]
-                    cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw green rectangle around new coordinates of tracking box
+                if frame is None:#reached end of stream
+                    break;
+
+                frame = cv2.resize(frame,(500,500))
+                (H,W) = frame.shape[:2]
+                
+                #if an object is being tracked
+                if self.BBtrack is not None:
+                    (success, box) = self.tracker.update(frame)#get new BB coordinates of selected box
                     
-                #update fps counter
-                #self.fps.update()
-                #self.fps.stop()
+                    if success:
+                        (x,y,w,h) = [int(v) for v in box]
+                        cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw green rectangle around new coordinates of tracking box
+                        
+                    #update fps counter
+                    #self.fps.update()
+                    #self.fps.stop()
+                    
+                    #initialize info to be diplayed on frame
+                    info=[
+                        ("Tracker", self.tracker),
+                        ("Success", "Yes" if success else "No")
+                        #("FPS", "{:.2f}".format(fps.fps()))                    
+                    ]
+                    
+                    #loop over info and add to frame
+                    for (i, (k,v)) in enumerate(info):
+                        text="{}: {}".format(k,v)
+                        cv2.putText(frame, text, (10, H - ((i * 20) + 20)),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
                 
-                #initialize info to be diplayed on frame
-                info=[
-                    ("Tracker", self.tracker),
-                    ("Success", "Yes" if success else "No")
-                    #("FPS", "{:.2f}".format(fps.fps()))                    
-                ]
+                #show output frame
+                cv2.imshow("Frame", frame)
+                key=cv2.waitKey(1) & 0xFF
                 
-                #loop over info and add to frame
-                for (i, (k,v)) in enumerate(info):
-                    text="{}: {}".format(k,v)
-                    cv2.putText(frame, text, (10, H - ((i * 20) + 20)),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-            
-            #show output frame
-            cv2.imshow("Frame", frame)
-            key=cv2.waitKey(1) & 0xFF
-            
-            #if the 's' key is selected, a bounding box can be drawn
-            if key == ord("s"):
-                #draw bounding box and press ENTER or SPACE after selecting the region of interest (ROI) or press ESCAPE to reselect
-                BBtrack=cv2.selectROI("Frame", frame, fromCenter=False, showCrosshair=True)
+                #if the 's' key is selected, a bounding box can be drawn
+                if key == ord("s"):
+                    #draw bounding box and press ENTER or SPACE after selecting the region of interest (ROI) or press ESCAPE to reselect
+                    self.BBtrack=cv2.selectROI("Frame", frame, fromCenter=False, showCrosshair=True)
+                    
+                    #start object tracker on the supplied bounding box, start FPS throughput estimator
+                    self.tracker.init(frame, self.BBtrack)
+                    #self.fps=FPS().start()
                 
-                #start object tracker on the supplied bounding box, start FPS throughput estimator
-                self.tracker.init(frame, BBtrack)
-                #self.fps=FPS().start()
-            
-            #if 'q' key is pressed, break
-            elif key==ord("q"):
+                #if 'q' key is pressed, break
+                elif key==ord("q"):
+                    break
+            else:
+                print("ERROR!! Stream could not be opened!!")
                 break
             
-        if self.video == None:
-            self.vs.stop() #release webcam pointer
-        else:
-            self.vs.release() #release file pointer
-            
+        self.vs.release() #release file pointer
         cv2.destroyAllWindows()
     
 if __name__ == "__main__":
-    obj_tracker=track("~/Desktop/cv2_test.mp4", "csrt")
+    obj_tracker=track("cv2_test.mp4", "csrt")
     obj_tracker.start()
