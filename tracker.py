@@ -25,6 +25,7 @@ class track():
 
         #initialize bounding box coordinates to track
         self.BBtrack = None
+        self.frames=[]
         #initialize fps throughput estimator
         #self.fps=None
     
@@ -36,11 +37,11 @@ class track():
         while self.vs.isOpened():
             ret,frame=self.vs.read()
             if ret :
-                print(np.shape(frame))
+                
                 frame=frame[1] if not self.video == None else frame #handle separate cases for VideoStream or VideoCapture
                 
                 if frame is None:#reached end of stream
-                    break;
+                    break
 
                 frame = cv2.resize(frame,(500,500))
                 (H,W) = frame.shape[:2]
@@ -56,7 +57,7 @@ class track():
                     #update fps counter
                     #self.fps.update()
                     #self.fps.stop()
-                    
+
                     #initialize info to be diplayed on frame
                     info=[
                         ("Tracker", self.tracker),
@@ -68,7 +69,21 @@ class track():
                     for (i, (k,v)) in enumerate(info):
                         text="{}: {}".format(k,v)
                         cv2.putText(frame, text, (10, H - ((i * 20) + 20)),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-                
+
+                #uncomment the following block to test without screen and with input coordinates
+
+                if self.BBtrack is None:
+                    (x,y,w,h) = input("Enter initial bounding box coordinates as \"[topleftX, topleftY, width, height]")
+                    cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
+
+                #add output frame to frames list
+                self.frames.append(frame) #add frame to list of frames
+
+
+                #end of test without screen block
+
+                #uncomment the following block to test with screen
+                """
                 #show output frame
                 cv2.imshow("Frame", frame)
                 key=cv2.waitKey(1) & 0xFF
@@ -85,12 +100,23 @@ class track():
                 #if 'q' key is pressed, break
                 elif key==ord("q"):
                     break
+                """
+                #end of test with screen block
             else:
                 print("ERROR!! Stream could not be opened!!")
                 break
             
         self.vs.release() #release file pointer
+        #combine frames and save video
+        video=cv2.VideoWriter('tracked_test', 0, 1, (500,500))
+
+        for f in self.frames:
+            video.write(f)
+        video.release() #release video pointer
+
+        #end cv2 processing
         cv2.destroyAllWindows()
+
     
 if __name__ == "__main__":
     obj_tracker=track("cv2_test.mp4", "csrt")
