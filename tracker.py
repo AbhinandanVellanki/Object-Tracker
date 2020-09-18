@@ -2,7 +2,6 @@
 #author: abhinandan.vellanki@gmail.com
 
 #import the necessary packages
-import argparse
 import time
 import cv2
 import numpy as np
@@ -119,5 +118,5 @@ class track():
 
     
 if __name__ == "__main__":
-    obj_tracker=track("cv2_test.mp4", "csrt")
+    obj_tracker=track("car_test1.mp4", "csrt")
     obj_tracker.start()
