@@ -112,7 +112,7 @@ class track():
         #combine frames and save video
         saved_videoname=self.video[:-4]+"_tracked.mp4"
         fourcc=cv2.VideoWriter_fourcc(*'MP4V')
-        video=cv2.VideoWriter(saved_videoname, fourcc, 60, (W,H))
+        video=cv2.VideoWriter(saved_videoname, fourcc, 20, (W,H))
         print(len(self.frames))
         for i in range(len(self.frames)):
             video.write(self.frames[i])
