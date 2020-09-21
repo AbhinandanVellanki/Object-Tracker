@@ -40,7 +40,7 @@ class track():
                 if frame is None: #reached end of stream
                     break
 
-                frame = cv2.resize(frame,(500,500))
+                #frame = cv2.resize(frame,(500,500))
                 (H,W) = frame.shape[:2]
                 
                 #if an object is being tracked
@@ -123,5 +123,7 @@ class track():
 
     
 if __name__ == "__main__":
-    obj_tracker=track("car_short_test.mp4", "csrt")
+    track_type=str(input("Enter the type of tracker to use :"))
+    target_video = "car_short_test.mp4"
+    obj_tracker=track(target_video, track_type)
     obj_tracker.start()
