@@ -123,7 +123,7 @@ class track():
 
     
 if __name__ == "__main__":
-    track_type=input("Enter the type of tracker to use :")
+    track_type= "csrt"
     target_video = "car_short_test.mp4"
     obj_tracker=track(target_video, track_type)
     obj_tracker.start()
