@@ -72,7 +72,7 @@ class track():
                 
                 if self.BBtrack is None:
                     print("Frame Size: ",frame.shape)
-                    (x,y,w,h) = input("Enter initial bounding box coordinates as \"[topleftX, topleftY, width, height]\"")
+                    (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height])\" :")
                     self.BBtrack = (x,y,w,h)
                     rect=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
                     #print(self.BBtrack)
