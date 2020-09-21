@@ -75,7 +75,7 @@ class track():
                     self.BBtrack = (x,y,w,h)
                     rect=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
                     #print(self.BBtrack)
-                    cv2.SetImageROI(frame, rect)
+                    #cv2.SetImageROI(frame, rect)
                     self.tracker.init(frame,self.BBtrack)
                     #self.fps=FPS().start()
                     print("Starting ROI drawn, tracker initialized")
