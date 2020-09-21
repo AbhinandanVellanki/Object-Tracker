@@ -119,5 +119,5 @@ class track():
 
     
 if __name__ == "__main__":
-    obj_tracker=track("car_test1.mp4", "csrt")
+    obj_tracker=track("car_test1.avi", "csrt")
     obj_tracker.start()
