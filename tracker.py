@@ -40,7 +40,7 @@ class track():
                 if frame is None: #reached end of stream
                     break
 
-                #frame = cv2.resize(frame,(500,500))
+                frame = cv2.resize(frame,(1439,899)) #resize all frames
                 (H,W) = frame.shape[:2]
                 
                 #if an object is being tracked
