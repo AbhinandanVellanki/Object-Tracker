@@ -73,8 +73,10 @@ class track():
                 if self.BBtrack is None:
                     (x,y,w,h) = input("Enter initial bounding box coordinates as \"[topleftX, topleftY, width, height]")
                     self.BBtrack = (x,y,w,h)
-                    cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
+                    rect=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
                     print(self.BBtrack)
+                    print("max rows: ",frame.rows,", max columns: ",frame.cols)
+                    cv2.SetImageROI(frame, rect)
                     self.tracker.init(frame,self.BBtrack)
                     #self.fps=FPS().start()
                     print("Starting ROI drawn, tracker initialized")
