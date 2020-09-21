@@ -110,8 +110,8 @@ class track():
         self.vs.release() #release file pointer
 
         #combine frames and save video
-        saved_videoname=self.video[:-4]+"_tracked.avi"
-        fourcc=cv2.VideoWriter_fourcc(*'XVID')
+        saved_videoname=self.video[:-4]+"_tracked.mp4"
+        fourcc=cv2.VideoWriter_fourcc(*'MP4V')
         video=cv2.VideoWriter(saved_videoname, fourcc, 60, (W,H))
         print(len(self.frames))
         for i in range(len(self.frames)):
