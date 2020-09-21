@@ -35,13 +35,11 @@ class track():
         #iterate over video frames
         while self.vs.isOpened():
             ret,frame=self.vs.read()
+            if frame is None: #reached end of stream
+                print("Reached end of video")
+                break
             if ret :
-
-                if frame is None: #reached end of stream
-                    break
-                print(frame.shape)
                 frame = cv2.resize(frame,(1439,899)) #resize all frames
-                print(frame.shape)
                 (H,W) = frame.shape[:2]
                 
                 #if an object is being tracked
@@ -64,14 +62,17 @@ class track():
                         #("FPS", "{:.2f}".format(fps.fps()))                    
                     ]
                     
-                    #loop over info and add to frame
+                    #loop over info and add to frame (uncomment only if video being watched on screen)
+                    """
                     for (i, (k,v)) in enumerate(info):
                         text="{}: {}".format(k,v)
                         cv2.putText(frame, text, (10, H - ((i * 20) + 20)),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                    """
 
                 #uncomment the following block to test without screen and with input coordinates
+
                 if self.BBtrack is None:
-                    print("Frame Size: ",frame.shape)
+                    print("Frame shape is ",frame.shape)
                     (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height)\" :")
                     self.BBtrack = (x,y,w,h)
                     rect=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
@@ -82,6 +83,7 @@ class track():
                     print("Starting ROI drawn, tracker initialized")
                 #add output frame to frames list
                 self.frames.append(frame) #add frame to list of frames
+
                 #end of test without screen block
 
                 #uncomment the following block to test with screen
