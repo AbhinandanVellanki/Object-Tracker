@@ -114,7 +114,7 @@ class track():
         fourcc=cv2.VideoWriter_fourcc(*'XVID')
         video=cv2.VideoWriter(saved_videoname, fourcc, 60, (W,H))
         print(len(self.frames))
-        for i in len(self.frames):
+        for i in range(len(self.frames)):
             video.write(self.frames[i])
         video.release() #release video pointer
 
