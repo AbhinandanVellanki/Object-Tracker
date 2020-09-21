@@ -39,8 +39,9 @@ class track():
 
                 if frame is None: #reached end of stream
                     break
-
+                print(frame.shape)
                 frame = cv2.resize(frame,(899,1439)) #resize all frames
+                print(frame.shape)
                 (H,W) = frame.shape[:2]
                 
                 #if an object is being tracked
@@ -69,10 +70,9 @@ class track():
                         cv2.putText(frame, text, (10, H - ((i * 20) + 20)),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
                 #uncomment the following block to test without screen and with input coordinates
-                
                 if self.BBtrack is None:
                     print("Frame Size: ",frame.shape)
-                    (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height])\" :")
+                    (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height)\" :")
                     self.BBtrack = (x,y,w,h)
                     rect=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
                     #print(self.BBtrack)
@@ -80,11 +80,8 @@ class track():
                     self.tracker.init(frame, self.BBtrack)
                     #self.fps=FPS().start()
                     print("Starting ROI drawn, tracker initialized")
-
-
                 #add output frame to frames list
                 self.frames.append(frame) #add frame to list of frames
-                
                 #end of test without screen block
 
                 #uncomment the following block to test with screen
@@ -92,7 +89,6 @@ class track():
                 #show output frame
                 cv2.imshow("Frame", frame)
                 key=cv2.waitKey(1) & 0xFF
-                
                 #if the 's' key is selected, a bounding box can be drawn
                 if key == ord("s"):
                     #draw bounding box and press ENTER or SPACE after selecting the region of interest (ROI) or press ESCAPE to reselect
@@ -101,7 +97,6 @@ class track():
                     #start object tracker on the supplied bounding box, start FPS throughput estimator
                     self.tracker.init(frame, self.BBtrack)
                     #self.fps=FPS().start()
-                
                 #if 'q' key is pressed, break
                 elif key==ord("q"):
                     break
@@ -114,7 +109,7 @@ class track():
         self.vs.release() #release file pointer
 
         #combine frames and save video
-        saved_videoname=self.video+"_tracked"
+        saved_videoname=self.video[:-3]+"_tracked.mp4"
         video=cv2.VideoWriter(saved_videoname, 0, 1, (500,500))
         for f in self.frames:
             video.write(f)
