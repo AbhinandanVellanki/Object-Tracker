@@ -39,9 +39,8 @@ class track():
                 print("Reached end of video")
                 break
             if ret :
+                (H,W) = frame.shape[:2] #to set size of saved video
                 frame = cv2.resize(frame,(1439,899)) #resize all frames
-                (H,W) = frame.shape[:2]
-                
                 #if an object is being tracked
                 if self.BBtrack is not None:
                     (success, box) = self.tracker.update(frame) #get new BB coordinates of selected box
@@ -113,9 +112,10 @@ class track():
         #combine frames and save video
         saved_videoname=self.video[:-4]+"_tracked.avi"
         fourcc=cv2.VideoWriter_fourcc(*'XVID')
-        video=cv2.VideoWriter(saved_videoname, fourcc, 60, (240,320))
-        for f in self.frames:
-            video.write(f)
+        video=cv2.VideoWriter(saved_videoname, fourcc, 60, (W,H))
+        print(len(self.frames))
+        for i in len(self.frames):
+            video.write(self.frames[i])
         video.release() #release video pointer
 
         #end cv2 processing
