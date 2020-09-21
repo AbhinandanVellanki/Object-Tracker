@@ -36,10 +36,8 @@ class track():
         while self.vs.isOpened():
             ret,frame=self.vs.read()
             if ret :
-                
-                frame=frame[1] if not self.video == None else frame #handle separate cases for VideoStream or VideoCapture
-                
-                if frame is None:#reached end of stream
+
+                if frame is None: #reached end of stream
                     break
 
                 frame = cv2.resize(frame,(500,500))
@@ -47,7 +45,7 @@ class track():
                 
                 #if an object is being tracked
                 if self.BBtrack is not None:
-                    (success, box) = self.tracker.update(frame)#get new BB coordinates of selected box
+                    (success, box) = self.tracker.update(frame) #get new BB coordinates of selected box
                     
                     if success:
                         print("update success")
@@ -74,8 +72,11 @@ class track():
                 
                 if self.BBtrack is None:
                     (x,y,w,h) = input("Enter initial bounding box coordinates as \"[topleftX, topleftY, width, height]")
-                    cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
-                    print("Starting ROI drawn")
+                    self.BBtrack=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
+                    self.tracker.init(frame,self.BBtrack)
+                    #self.fps=FPS().start()
+                    print("Starting ROI drawn, tracker initialised")
+
 
                 #add output frame to frames list
                 self.frames.append(frame) #add frame to list of frames
