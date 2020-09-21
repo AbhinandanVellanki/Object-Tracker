@@ -107,7 +107,8 @@ class track():
             
         self.vs.release() #release file pointer
         #combine frames and save video
-        video=cv2.VideoWriter('tracked_test', 0, 1, (500,500))
+        saved_videoname=self.video+"_tracked"
+        video=cv2.VideoWriter(saved_videoname, 0, 1, (500,500))
 
         for f in self.frames:
             video.write(f)
