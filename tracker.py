@@ -46,7 +46,6 @@ class track():
                     (success, box) = self.tracker.update(frame) #get new BB coordinates of selected box
                     
                     if success:
-                        print("update success")
                         (x,y,w,h) = [int(v) for v in box]
                         cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw green rectangle around new coordinates of tracking box
                         
@@ -110,12 +109,14 @@ class track():
         self.vs.release() #release file pointer
 
         #combine frames and save video
+        print("Saving tracked frames into video...")
         saved_videoname=self.video[:-4]+"_tracked.mp4"
-        fourcc=cv2.VideoWriter_fourcc(*'MP4V')
+        fourcc = cv2.cv.CV_FOURCC('m', 'p', '4', 'v')
         video=cv2.VideoWriter(saved_videoname, fourcc, 20, (W,H))
         print(len(self.frames))
         for i in range(len(self.frames)):
             video.write(self.frames[i])
+        print("Video saved as ",saved_videoname)
         video.release() #release video pointer
 
         #end cv2 processing
