@@ -4,7 +4,7 @@
 #import the necessary packages
 import time
 import cv2
-import FPS
+#import FPS
 import sys
 
 class Track():
