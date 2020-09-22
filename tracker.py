@@ -89,7 +89,7 @@ if __name__ == "__main__":
     #combine frames and save video
     saved_videoname=target_video[:-4]+"_tracked.avi"
     print("Saving video as: ",saved_videoname," ...")
-    out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (W,H))
+    out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (1439,899))
     print("Video saved successfully")
 
     #end cv2 processing 
