@@ -90,6 +90,9 @@ if __name__ == "__main__":
     saved_videoname=target_video[:-4]+"_tracked.avi"
     print("Saving video as: ",saved_videoname," ...")
     out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (1439,899))
+    for i in range(len(frames)): #iterate through frames array, write frames to video
+        out.write(frames[i])
+    out.release()
     print("Video saved successfully")
 
     #end cv2 processing 
