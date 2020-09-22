@@ -59,13 +59,14 @@ if __name__ == "__main__":
     W=0 #initial frame width
     H=0 #initial frame height
     while vs.isOpened():
-        (H,W) = frame.shape[:2] #to set size of saved video
-        frame = cv2.resize(frame,(1439,899)) #resize all frames to MacBook Pro 13.3" screen size for accurate input
         ret,new_frame = vs.read() #read next frame <- to draw latest ROI 
         if new_frame is None:
             print("Reached end of video, stopping tracker...")
             break
         if ret: #if successfully able to read next frame
+            (H,W) = new_frame.shape[:2] #to set size of saved video
+            new_frame = cv2.resize(new_frame,(1439,899)) #resize all frames to MacBook Pro 13.3" screen size for accurate input
+            
             if not latest_box: #nothing being tracked
                 (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height)\" :")
                 rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
