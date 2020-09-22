@@ -4,14 +4,13 @@
 #import the necessary packages
 import time
 import cv2
-import numpy as np
+#import FPS
+import sys
 
-class track():
-    
-    def __init__(self, video, tracker):        
-        self.video = video
-        self.tracker_name = tracker
-        OPENCV_TRACKERS={ #mapper, does not include GOTURN
+class Track():
+    def __init__(self, tracker_type):
+        self.tracker_type=tracker_type
+        OPENCV_TRACKERS={ #name to function mapper, does not include GOTURN
             "csrt": cv2.TrackerCSRT_create,
             "kcf": cv2.TrackerKCF_create,
             "boosting": cv2.TrackerBoosting_create,
@@ -20,110 +19,80 @@ class track():
             "medianflow": cv2.TrackerMedianFlow_create,
             "mosse": cv2.TrackerMOSSE_create
         }
-        self.tracker=OPENCV_TRACKERS[self.tracker_name]() #call constructor at runtime
+        self.tracker=OPENCV_TRACKERS[self.tracker_type]() #call constructor at runtime
 
-        #initialize bounding box coordinates to track
-        self.BBtrack = None
-        self.frames=[]
-        #initialize fps throughput estimator
-        #self.fps=None
-    
-    def start(self):
-        #start video stream
-        self.vs=cv2.VideoCapture(self.video)
-                
-        #iterate over video frames
-        while self.vs.isOpened():
-            ret,frame=self.vs.read()
-            if frame is None: #reached end of stream
-                print("Reached end of video")
-                break
-            if ret :
-                (H,W) = frame.shape[:2] #to set size of saved video
-                frame = cv2.resize(frame,(1439,899)) #resize all frames
-                #if an object is being tracked
-                if self.BBtrack is not None:
-                    (success, box) = self.tracker.update(frame) #get new BB coordinates of selected box
-                    
-                    if success:
-                        (x,y,w,h) = [int(v) for v in box]
-                        cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw green rectangle around new coordinates of tracking box
-                        
-                    #update fps counter
-                    #self.fps.update()
-                    #self.fps.stop()
+    def track(self, old_bb, new_frame, old_frame):
 
-                    #initialize info to be diplayed on frame
-                    info=[
-                        ("Tracker", self.tracker),
-                        ("Success", "Yes" if success else "No")
-                        #("FPS", "{:.2f}".format(fps.fps()))                    
-                    ]
-                    
-                    #loop over info and add to frame (uncomment only if video being watched on screen)
-                    """
-                    for (i, (k,v)) in enumerate(info):
-                        text="{}: {}".format(k,v)
-                        cv2.putText(frame, text, (10, H - ((i * 20) + 20)),cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-                    """
+        if old_frame is None or new_frame is None:
+            print("No frame given")
+            return None
+        
+        if old_bb is None:
+            print("No Bounding Box given")
+            return None
+        try:
+            self.tracker.init(old_frame,old_bb)
+        except Exception as e:
+            print("Caught : ",e)
+            return None
 
-                #uncomment the following block to test without screen and with input coordinates
+        (success,box)=self.tracker.update(new_frame)
 
-                if self.BBtrack is None:
-                    print("Frame shape is ",frame.shape)
-                    (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height)\" :")
-                    self.BBtrack = (x,y,w,h)
-                    rect=cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
-                    #print(self.BBtrack)
-                    #cv2.SetImageROI(frame, rect)
-                    self.tracker.init(frame, self.BBtrack)
-                    #self.fps=FPS().start()
-                    print("Starting ROI drawn, tracker initialized")
-                #add output frame to frames list
-                self.frames.append(frame) #add frame to list of frames
+        if success:
+            (x,y,w,h) = [int(v) for v in box]
+            return (x,y,w,h)
+        else:
+            print("Error in Tracking")
+            return None
+ 
+        #cv2.destroyAllWindows
 
-                #end of test without screen block
-
-                #uncomment the following block to test with screen
-                """
-                #show output frame
-                cv2.imshow("Frame", frame)
-                key=cv2.waitKey(1) & 0xFF
-                #if the 's' key is selected, a bounding box can be drawn
-                if key == ord("s"):
-                    #draw bounding box and press ENTER or SPACE after selecting the region of interest (ROI) or press ESCAPE to reselect
-                    self.BBtrack=cv2.selectROI("Frame", frame, fromCenter=False, showCrosshair=True)
-                    
-                    #start object tracker on the supplied bounding box, start FPS throughput estimator
-                    self.tracker.init(frame, self.BBtrack)
-                    #self.fps=FPS().start()
-                #if 'q' key is pressed, break
-                elif key==ord("q"):
-                    break
-                """
-                #end of test with screen block
-            else:
-                print("ERROR!! Stream could not be opened!!")
-                break
-            
-        self.vs.release() #release file pointer
-
-        #combine frames and save video
-        print("Saving tracked frames into video...")
-        saved_videoname=self.video[:-4]+"_tracked.avi"
-        video=cv2.VideoWriter(saved_videoname, cv2.VideoWriter_fourcc(*'DIVX'), 15, (W,H))
-        print(len(self.frames))
-        for i in range(len(self.frames)):
-            video.write(self.frames[i])
-        print("Video saved as ",saved_videoname)
-        video.release() #release video pointer
-
-        #end cv2 processing
-        cv2.destroyAllWindows()
-
-    
 if __name__ == "__main__":
-    track_type= "csrt"
+
+    #the following block is for testing purposes without a screen
+    tracker_type="csrt"
     target_video = "car_short_test.mp4"
-    obj_tracker=track(target_video, track_type)
-    obj_tracker.start()
+    tracker=Track(tracker_type)
+    frames=[] #list to store video frames
+    latest_box=None #stores latest bounding box coordinates
+    vs=cv2.VideoCapture(target_video)
+    W=0 #initial frame width
+    H=0 #initial frame height
+    while vs.isOpened():
+        ret,new_frame = vs.read() #read next frame <- to draw latest ROI 
+        if new_frame is None:
+            print("Reached end of video, stopping tracker...")
+            break
+        if ret: #if successfully able to read next frame
+            (H,W) = new_frame.shape[:2] #to set size of saved video
+            new_frame = cv2.resize(new_frame,(1439,899)) #resize all frames to MacBook Pro 13.3" screen size for accurate input
+            
+            if not latest_box: #nothing being tracked
+                (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height)\" :")
+                rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) #draw initial ROI
+                latest_box = (x,y,w,h) #storing bb coordinates
+                frames.append(new_frame) #adding first frame to list
+                print("Created ROI, starting tracking...")
+                continue
+
+            old_frame=frames[-1] #fetching previous frame
+            (x,y,w,h) = latest_box #fetching bb coordinates
+            (a,b,c,d) = tracker.track((x,y,w,h),new_frame, old_frame) #calling tracker
+            rect2 = cv2.rectangle(new_frame, (a,b), (a+c, b+d), (0,255,0)) #drawing updated ROI on new frame
+            frames.append(new_frame) #adding new frame to list
+            latest_box = (a,b,c,d) #setting updated bb coordinates
+        else:
+            print("UNABLE TO READ STREAM!!")
+            sys.exit(0)
+    vs.release()
+
+    #combine frames and save video
+    saved_videoname=target_video[:-4]+"_tracked.avi"
+    print("Saving video as: ",saved_videoname," ...")
+    out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (W,H))
+    print("Video saved successfully")
+
+    #end cv2 processing 
+    cv2.destroyAllWindows
+
+        
