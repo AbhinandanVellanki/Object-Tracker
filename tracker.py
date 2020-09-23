@@ -21,7 +21,7 @@ class Track():
         }
         self.tracker=OPENCV_TRACKERS[self.tracker_type]() #call constructor at runtime
 
-    def track(self, old_bb, new_frame, old_frame):
+    def track_next(self, old_bb, new_frame, old_frame):
 
         if old_frame is None or new_frame is None:
             print("No frame given")
@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
             old_frame=frames[-1] #fetching previous frame
             (x,y,w,h) = latest_box #fetching bb coordinates
-            (a,b,c,d) = tracker.track(old_bb = (x,y,w,h), new_frame=new_frame, old_frame=old_frame)#calling tracker
+            (a,b,c,d) = tracker.track_next(old_bb = (x,y,w,h), new_frame=new_frame, old_frame=old_frame) #calling tracker
             rect2 = cv2.rectangle(new_frame, (a,b), (a+c, b+d), (0,255,0)) #drawing updated ROI on new frame
             frames.append(new_frame) #adding new frame to list
             latest_box = (a,b,c,d) #setting updated bb coordinates
