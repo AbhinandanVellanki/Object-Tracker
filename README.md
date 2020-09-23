@@ -18,7 +18,7 @@ tracker_type =  "csrt": Discriminative Correlation Filter
                 "medianflow": MedianFlow Tracker
                 "mosse": MOSSE Tracker
 
-new bounding box coordinates = tracker.track(<old bounding box coordinates>, <old frame>, <new frame>)
+new bounding box coordinates = tracker.track(<old bounding box coordinates>, <new frame>, <old frame>)
 
 
 # Testing
