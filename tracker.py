@@ -87,7 +87,7 @@ if __name__ == "__main__":
     vs.release()
 
     #combine frames and save video
-    saved_videoname=target_video[:-4]+"_tracked.avi"
+    saved_videoname=target_video[:-4]+"_tracked_"+tracker_type+".avi"
     print("Saving video as: ",saved_videoname," ...")
     out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (1439,899))
     for i in range(len(frames)): #iterate through frames array, write frames to video
