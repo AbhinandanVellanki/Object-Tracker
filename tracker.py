@@ -50,9 +50,9 @@ class Track():
 if __name__ == "__main__":
 
     #the following block is for testing purposes without a screen
-    tracker_type="kcf"
+    tracker_type="csrt"
     target_video = "car_short_test.mp4"
-    tracker=Track(tracker_type)
+    tracker=Track(tracker_type=tracker_type)
     frames=[] #list to store video frames
     latest_box=None #stores latest bounding box coordinates
     vs=cv2.VideoCapture(target_video)
