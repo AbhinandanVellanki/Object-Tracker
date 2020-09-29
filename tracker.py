@@ -50,7 +50,7 @@ class Track():
 if __name__ == "__main__":
 
     #the following block is for testing purposes without a screen
-    tracker_type=str(input("Enter tracker type to use"))
+    tracker_type=str(input("Enter tracker type to use: "))
     target_video = "face_test.mp4"
     tracker=Track(tracker_type=tracker_type)
     frames=[] #list to store video frames
