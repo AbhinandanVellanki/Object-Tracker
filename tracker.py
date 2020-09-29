@@ -50,7 +50,7 @@ class Track():
 if __name__ == "__main__":
 
     #the following block is for testing purposes without a screen
-    tracker_type=str(input("Enter tracker type to use: "))
+    tracker_type=input("Enter tracker type to use: ")
     target_video = "face_test.mp4"
     tracker=Track(tracker_type=tracker_type)
     frames=[] #list to store video frames
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     #combine frames and save video
     saved_videoname=target_video[:-4]+"_tracked_"+tracker_type+".avi"
-    print("Saving video as: ",saved_videoname," ...")
+    print "Saving video as: ",saved_videoname," ..."
     out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (1535,863))
     for i in range(len(frames)): #iterate through frames array, write frames to video
         out.write(frames[i])
