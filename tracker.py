@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     #the following block is for testing purposes without a screen
     tracker_type="csrt"
-    target_video = "car_short_test.mp4"
+    target_video = "face_test.mp4"
     tracker=Track(tracker_type=tracker_type)
     frames=[] #list to store video frames
     latest_box=None #stores latest bounding box coordinates
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             break
         if ret: #if successfully able to read next frame
             (H,W) = new_frame.shape[:2] #to set size of saved video
-            new_frame = cv2.resize(new_frame,(1439,899)) #resize all frames to MacBook Pro 13.3" screen size for accurate input
+            new_frame = cv2.resize(new_frame,(1535,863)) #resize all frames to Dell Inspiron 15 screen size for accurate input
             
             if not latest_box: #nothing being tracked
                 (x,y,w,h) = input("Enter initial bounding box coordinates as \"(topleftX, topleftY, width, height)\" :")
