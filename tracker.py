@@ -13,7 +13,7 @@ class Track():
         self.tracker_type=tracker_type
         self.trackers = cv2.MultiTracker_create() #intialize multi-object tracker
     
-    def create(tracker_type):
+    def create(self,tracker_type):
         OPENCV_TRACKERS={ #name to function mapper, does not include GOTURN
             "csrt": cv2.TrackerCSRT_create,
             "kcf": cv2.TrackerKCF_create,
