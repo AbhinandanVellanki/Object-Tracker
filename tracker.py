@@ -40,7 +40,7 @@ class Track():
         try:
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
-                succ=self.trackers.add(tracker, old_frame, tuple(old_bbs[i]))
+                self.trackers.add(tracker, old_frame, tuple(old_bbs[i]))
         except Exception as e:
             print("Caught: ", e)
             return None
@@ -105,6 +105,7 @@ if __name__ == "__main__":
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
             
             frames.append(new_frame) #adding new frame to list
+            latest_boxes=[] #clear old list
             latest_boxes = list(new_boxes) #setting updated bb coordinates
             print(latest_boxes,"time elapsed: ", time.time()-start_time )
         else:
