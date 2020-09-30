@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
             old_frame = frames[-1] #fetching previous frame
             old_boxes = latest_boxes #fetching old bb coordinates
-            new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
+            new_boxes = tracker.track(old_bbs=tuple(old_boxes), new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
 
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
