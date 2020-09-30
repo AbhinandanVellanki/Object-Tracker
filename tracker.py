@@ -68,7 +68,7 @@ if __name__ == "__main__":
     vs=cv2.VideoCapture(target_video)
     W=0 #initial frame width
     H=0 #initial frame height
-
+    start_time = time.time()
     while vs.isOpened(): #while videostream is open
         ret,new_frame = vs.read() #read next frame <- draw latest ROIs 
         
@@ -106,6 +106,7 @@ if __name__ == "__main__":
             
             frames.append(new_frame) #adding new frame to list
             latest_boxes = list(new_boxes) #setting updated bb coordinates
+            print(latest_boxes,"time elapsed: ", time.time()-start_time )
         else:
             print("!!UNABLE TO READ STREAM!!")
             sys.exit(0)
