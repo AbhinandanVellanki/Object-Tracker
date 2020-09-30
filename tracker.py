@@ -13,7 +13,7 @@ class Track():
         self.tracker_type=tracker_type
         self.trackers = cv2.MultiTracker_create() #intialize multi-object tracker
     
-    def create(self,tracker_type):
+    def create(tracker_type):
         OPENCV_TRACKERS={ #name to function mapper, does not include GOTURN
             "csrt": cv2.TrackerCSRT_create,
             "kcf": cv2.TrackerKCF_create,
@@ -23,7 +23,7 @@ class Track():
             "medianflow": cv2.TrackerMedianFlow_create,
             "mosse": cv2.TrackerMOSSE_create
         }
-        tracker=OPENCV_TRACKERS[self.tracker_type]() #call constructor at runtime
+        tracker=OPENCV_TRACKERS[tracker_type]() #call constructor at runtime
         return tracker
 
     def track(self, old_bbs, old_frame, new_frame):
@@ -41,7 +41,8 @@ class Track():
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
                 print(old_bbs[i])
-                self.trackers.add(tracker, tuple(old_bbs[i]), old_frame)
+                succ=self.trackers.add(tracker, tuple(old_bbs[i]), old_frame)
+                print(succ)
         except Exception as e:
             print("Caught: ", e)
             return None
