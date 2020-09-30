@@ -101,7 +101,7 @@ if __name__ == "__main__":
             new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
 
             for nbox in new_boxes: #draw updated ROIs    
-                    (x,y,w,h) = [int(v) for v in box] 
+                    (x,y,w,h) = [int(v) for v in nbox] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
             
             frames.append(new_frame) #adding new frame to list
