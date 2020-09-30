@@ -91,7 +91,7 @@ if __name__ == "__main__":
                     (x,y,w,h) = [int(v) for v in box] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) 
 
-                latest_boxes = list(boxes) #storing bb coordinates
+                latest_boxes = boxes #storing bb coordinates
                 frames.append(new_frame) #adding first frame to list
                 print("Created ROI, starting tracking...")
                 continue
@@ -105,8 +105,7 @@ if __name__ == "__main__":
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
             
             frames.append(new_frame) #adding new frame to list
-            latest_boxes=[] #clear old list
-            latest_boxes = list(new_boxes) #setting updated bb coordinates
+            latest_boxes = new_boxes #setting updated bb coordinates
             print(len(latest_boxes),"time elapsed: ", time.time()-start_time )
         else:
             print("!!UNABLE TO READ STREAM!!")
