@@ -41,7 +41,7 @@ class Track():
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
                 print(old_bbs[i])
-                succ=self.trackers.add(tracker,old_frame, tuple(old_bbs[i]))
+                succ=self.trackers.add(tracker, old_frame, tuple(old_bbs[i]))
                 print(succ)
         except Exception as e:
             print("Caught: ", e)
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     tracker=Track(tracker_type=tracker_type) #initialise multi-tracker object
 
     frames=[] #list to store video frames
-    latest_boxes=None #stores coordinates of latest bounding boxes
+    latest_boxes = [] #stores coordinates of latest bounding boxes
     vs=cv2.VideoCapture(target_video)
     W=0 #initial frame width
     H=0 #initial frame height
@@ -82,7 +82,7 @@ if __name__ == "__main__":
             (H,W) = new_frame.shape[:2] #to set size of saved video
             new_frame = cv2.resize(new_frame,(1535,863)) #resize all frames to Dell Inspiron 15 screen size for accurate input
             
-            if not latest_boxes: #nothing being tracked
+            if  len(latest_boxes) == 0: #nothing being tracked
                 boxes = input("Enter coordinates of initial bounding boxes  as \"((topleftX1, topleftY1, width1, height1),(topleftX2, topleftY2, width2, height2)...)\" :")
                 
                 if len(boxes) == 0: 
@@ -93,21 +93,21 @@ if __name__ == "__main__":
                     (x,y,w,h) = [int(v) for v in box] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) 
 
-                latest_boxes = boxes #storing bb coordinates
+                latest_boxes = list(boxes) #storing bb coordinates
                 frames.append(new_frame) #adding first frame to list
                 print("Created ROI, starting tracking...")
                 continue
 
             old_frame = frames[-1] #fetching previous frame
-            old_boxes = latest_boxes #fetching old bb coordinates
-            new_boxes = tracker.track(old_bbs=tuple(old_boxes), new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
+            old_boxes = tuple(latest_boxes) #fetching old bb coordinates
+            new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
 
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
             
             frames.append(new_frame) #adding new frame to list
-            latest_boxes = new_boxes #setting updated bb coordinates
+            latest_boxes = list(new_boxes) #setting updated bb coordinates
         else:
             print("!!UNABLE TO READ STREAM!!")
             sys.exit(0)
