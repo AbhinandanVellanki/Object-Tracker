@@ -40,9 +40,7 @@ class Track():
         try:
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
-                print(old_bbs[i])
                 succ=self.trackers.add(tracker, old_frame, tuple(old_bbs[i]))
-                print(succ)
         except Exception as e:
             print("Caught: ", e)
             return None
