@@ -26,7 +26,7 @@ class Track():
         tracker=OPENCV_TRACKERS[self.tracker_type]() #call constructor at runtime
         return tracker
 
-    def track(self,old_bbs, old_frame, new_frame):
+    def track(self, old_bbs, old_frame, new_frame):
         num_trackers = len(old_bbs)
 
         if old_frame is None or new_frame is None:
@@ -40,7 +40,7 @@ class Track():
         try:
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
-                self.trackers.add(tracker, old_bbs[i], old_frame)
+                self.trackers.add(tracker, tuple(old_bbs[i]), old_frame)
         except Exception as e:
             print("Caught: ", e)
             return None
