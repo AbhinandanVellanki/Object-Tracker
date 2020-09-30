@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     #the following block is for testing purposes without a screen
 
-    tracker_type=input("Enter tracker type to use: ")
+    tracker_type="csrt"
     target_video = "face_test.mp4"
     tracker=Track(tracker_type=tracker_type) #initialise multi-tracker object
 
