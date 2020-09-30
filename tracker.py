@@ -107,7 +107,7 @@ if __name__ == "__main__":
             frames.append(new_frame) #adding new frame to list
             latest_boxes=[] #clear old list
             latest_boxes = list(new_boxes) #setting updated bb coordinates
-            print(latest_boxes,"time elapsed: ", time.time()-start_time )
+            print(len(latest_boxes),"time elapsed: ", time.time()-start_time )
         else:
             print("!!UNABLE TO READ STREAM!!")
             sys.exit(0)
