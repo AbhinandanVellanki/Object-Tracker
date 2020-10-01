@@ -11,7 +11,6 @@ import sys
 class Track():
     def __init__(self, tracker_type):
         self.tracker_type=tracker_type
-        self.trackers = cv2.MultiTracker_create() #intialize multi-object tracker
     
     def create(self,tracker_type):
         OPENCV_TRACKERS={ #name to function mapper, does not include GOTURN
@@ -38,14 +37,15 @@ class Track():
             return None
 
         try:
+            trackers= cv2.MultiTracker_create() #intialize multi-object tracker
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
-                self.trackers.add(tracker, old_frame, tuple(old_bbs[i]))
+                trackers.add(tracker, old_frame, tuple(old_bbs[i]))
         except Exception as e:
             print("Caught: ", e)
             return None
 
-        (success, boxes) = self.trackers.update(new_frame)
+        (success, boxes) = trackers.update(new_frame)
 
         if success:
             return boxes
