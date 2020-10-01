@@ -33,7 +33,7 @@ class Track():
             print("Tracker did not get two frames")
             return None
         
-        if len(old_bbs) == 0:
+        if num_trackers == 0:
             print("No Bounding Box given")
             return None
 
@@ -46,7 +46,6 @@ class Track():
             return None
 
         (success, boxes) = self.trackers.update(new_frame)
-        print("tracker len:",len(boxes))
 
         if success:
             return boxes
@@ -99,14 +98,15 @@ if __name__ == "__main__":
 
             old_frame = frames[-1] #fetching previous frame
             old_boxes = tuple(latest_boxes) #fetching old bb coordinates
+            print(len(old_boxes))
             new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
+            print(len(new_boxes))
 
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
             
             frames.append(new_frame) #adding new frame to list
-            latest_boxes=[]
             latest_boxes = new_boxes #setting updated bb coordinates
             print(len(latest_boxes),"time elapsed: ", time.time()-start_time )
         else:
