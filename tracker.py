@@ -46,6 +46,7 @@ class Track():
             return None
 
         (success, boxes) = self.trackers.update(new_frame)
+        print("tracker len:",len(boxes))
 
         if success:
             return boxes
