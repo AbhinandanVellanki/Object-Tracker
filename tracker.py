@@ -105,6 +105,7 @@ if __name__ == "__main__":
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
             
             frames.append(new_frame) #adding new frame to list
+            latest_boxes=[]
             latest_boxes = new_boxes #setting updated bb coordinates
             print(len(latest_boxes),"time elapsed: ", time.time()-start_time )
         else:
