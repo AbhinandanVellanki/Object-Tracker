@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
                 latest_boxes = boxes #storing bb coordinates
                 frames.append(new_frame) #adding first frame to list
-                print("Created ROI, starting tracking...")
+                print("Created ROI, started tracking...")
                 continue
 
             old_frame = frames[-1] #fetching previous frame
@@ -103,6 +103,7 @@ if __name__ == "__main__":
             new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
             after_track = time.time()
             track_times.append(after_track-before_track)
+            print("tracktime: ", after_track-before_track)
 
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
