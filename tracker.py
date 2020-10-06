@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     #the following block is for testing purposes without a screen
 
-    tracker_type="csrt"
+    tracker_type=str(input("Enter type of tracker to use"))
     target_video = "face_test.mp4"
     tracker=Track(tracker_type=tracker_type) #initialise multi-tracker object
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
             new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
             after_track = time.time()
             track_times.append(after_track-before_track)
-            
+
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
