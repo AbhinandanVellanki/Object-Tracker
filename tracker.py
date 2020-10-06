@@ -68,17 +68,18 @@ if __name__ == "__main__":
     vs=cv2.VideoCapture(target_video)
     W=0 #initial frame width
     H=0 #initial frame height
-    start_time = time.time()
+    track_times=[]
     while vs.isOpened(): #while videostream is open
         ret,new_frame = vs.read() #read next frame <- draw latest ROIs 
         
         if new_frame is None:
             print("Reached end of video, stopping tracker...")
+            print("Average time per track: ", float(sum(track_times)/len(track_times)))
             break
         
         if ret: #if successfully able to read next frame
             (H,W) = new_frame.shape[:2] #to set size of saved video
-            new_frame = cv2.resize(new_frame,(1535,863)) #resize all frames to Dell Inspiron 15 screen size for accurate input
+            new_frame = cv2.resize(new_frame,(600,400)) #resize all frames to Dell Inspiron 15 screen size for accurate input
             
             if  len(latest_boxes) == 0: #nothing being tracked
                 boxes = input("Enter coordinates of initial bounding boxes  as \"((topleftX1, topleftY1, width1, height1),(topleftX2, topleftY2, width2, height2)...)\" :")
@@ -98,8 +99,11 @@ if __name__ == "__main__":
 
             old_frame = frames[-1] #fetching previous frame
             old_boxes = tuple(latest_boxes) #fetching old bb coordinates
+            before_track = time.time()
             new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
-
+            after_track = time.time()
+            track_times.append(after_track-before_track)
+            
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2)
@@ -115,7 +119,7 @@ if __name__ == "__main__":
     #combine frames and save video
     saved_videoname=target_video[:-4]+"_tracked_"+tracker_type+".avi"
     print("Saving video as: ",saved_videoname," ...")
-    out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (1535,863))
+    out = cv2.VideoWriter(saved_videoname,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (600,400))
     for i in range(len(frames)): #iterate through frames array, write frames to video
         out.write(frames[i])
     out.release()
