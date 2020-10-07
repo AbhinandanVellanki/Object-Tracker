@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #multi - object tracker to improve thermal camera
 #author: abhinandan.vellanki@gmail.com
 
