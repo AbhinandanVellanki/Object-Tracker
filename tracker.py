@@ -52,7 +52,7 @@ class Track():
         t1 = time.time()
         (success, boxes) = trackers.update(new_frame)
         t2 = time.time() - t1
-    	print("Track time: ", t2)
+        print("Track time: ", t2)
 
         if success:
             return boxes
@@ -94,9 +94,9 @@ if __name__ == "__main__":
                 if len(boxes) == 0: 
                     print("No bounding box coordinates entered")
                     sys.exit(0)
-
+                
                 for box in boxes: #draw initial ROIs    
-                    (x,y,w,h) = [int(v) for v in box] 
+                    (x,y,w,h) = box 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) 
 
                 latest_boxes = boxes #storing bb coordinates
