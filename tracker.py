@@ -37,16 +37,22 @@ class Track():
             return None
 
         try:
+            t1=time.time()
             trackers= cv2.MultiTracker_create() #intialize multi-object tracker
             for i in range(num_trackers):
                 tracker = self.create(self.tracker_type)
                 trackers.add(tracker, old_frame, tuple(old_bbs[i]))
+            t2=time.time() - t1
+            print("Init time: ", t2)
         except Exception as e:
             print("Caught: ", e)
             return None
 
+        t1 = time.time()
         (success, boxes) = trackers.update(new_frame)
-
+        t2 = time.time() - t1
+    	print("Track time: ", t2)
+        
         if success:
             return boxes
         else:
