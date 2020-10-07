@@ -89,12 +89,18 @@ if __name__ == "__main__":
             new_frame = cv2.resize(new_frame,(600,400)) #resize all frames to Dell Inspiron 15 screen size for accurate input
             
             if  len(latest_boxes) == 0: #nothing being tracked
-                boxes = input("Enter coordinates of initial bounding boxes  as \"((topleftX1, topleftY1, width1, height1),(topleftX2, topleftY2, width2, height2)...)\" :")
+                l = input("Enter coordinates of initial bounding boxes  as \"(topleftX1, topleftY1, width1, height1),(topleftX2, topleftY2, width2, height2)...\" :")
                 
-                if len(boxes) == 0: 
+                if len(l) == 0: 
                     print("No bounding box coordinates entered")
                     sys.exit(0)
                 
+                boxes=[]
+                for tup in l.split('),('):
+                    tup=tup.replace(')','').replace('(','')
+                    boxes.append(tuple(tup.split(',')))
+                boxes=tuple(boxes)
+                print(boxes)
                 for box in boxes: #draw initial ROIs    
                     (x,y,w,h) = box 
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) 
