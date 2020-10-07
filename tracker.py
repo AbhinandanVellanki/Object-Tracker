@@ -100,9 +100,9 @@ if __name__ == "__main__":
                     tup=tup.replace(')','').replace('(','')
                     boxes.append(tuple(tup.split(',')))
                 boxes=tuple(boxes)
-                print(boxes)
-                for box in boxes: #draw initial ROIs    
-                    (x,y,w,h) = box 
+
+                for box in boxes: #draw initial ROIs
+                    (x,y,w,h) = [int(v) for v in box]
                     rect = cv2.rectangle(new_frame, (x,y), (x+w, y+h), (0,255,0), 2) 
 
                 latest_boxes = boxes #storing bb coordinates
