@@ -52,7 +52,7 @@ class Track():
         (success, boxes) = trackers.update(new_frame)
         t2 = time.time() - t1
     	print("Track time: ", t2)
-        
+
         if success:
             return boxes
         else:
@@ -109,7 +109,6 @@ if __name__ == "__main__":
             new_boxes = tracker.track(old_bbs=old_boxes, new_frame=new_frame, old_frame=old_frame) #calling multi-tracker
             after_track = time.time()
             track_times.append(after_track-before_track)
-            print("tracktime: ", after_track-before_track)
 
             for nbox in new_boxes: #draw updated ROIs    
                     (x,y,w,h) = [int(v) for v in nbox] 
